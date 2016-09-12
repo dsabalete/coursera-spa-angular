@@ -17,6 +17,7 @@
 
             if ($scope.menu.trim() === '') {
                 $scope.message = 'Please enter data first';
+                 $scope.numItems = 0;
                 return;
             }
 
