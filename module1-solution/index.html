@@ -12,22 +12,34 @@
             font-size: 1.3em;
             font-weight: bold;
         }
+        .red { color: red; }
+        .green { color: green; }
+        .border-green {
+            border: solid 2px green;
+            padding: 20px;
+        }
+        .border-red {
+            border: solid 2px red;
+            padding: 20px;
+        }
     </style>
 </head>
 
-<body ng-app="LunchChecker">
+<body ng-app="LunchCheck">
 
-    <div class="container" ng-controller="LunchCheckerController">
+    <div class="container" ng-controller="LunchCheckController">
         <h1>Lunch Checker</h1>
 
-        <div class="form-group">
-            <input id="lunch-menu" type="text" placeholder="list comma separated dishes you usually have for lunch" class="form-control">
+        <div class="form-group" ng-class="numItems > 0? 'border-green': 'border-red'">
+            
+            <input id="lunch-menu" type="text" placeholder="list comma separated dishes you usually have for lunch" class="form-control" ng-model="menu">
+            <small>Empty items like `, ,` are not considered</small>
         </div>
         <div class="form-group">
-            <button class="btn btn-default">Check If Too Much</button>
+            <button class="btn btn-default" ng-click="check();">Check If Too Much</button>
         </div>
-        <div class="form-group message">
-            <!-- Your message can go here. -->
+        <div class="form-group message" ng-class="numItems > 0 ? 'green': 'red'">
+            {{message}}
         </div>
     </div>
 
