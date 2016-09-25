@@ -1,35 +1,62 @@
 (function () {
     'use strict';
 
-    angular.module('ShoppingList', [])
+    angular.module('ShoppingListCheckOff', [])
 
-        .controller('ShoppingListController', ShoppingListController);
+        .controller('ToBuyController', ToBuyController)
+
+        .controller('AlreadyBoughtController', AlreadyBoughtController)
+
+        .service('ShoppingListCheckOffService', ShoppingListCheckOffService);
 
 
 
-    ShoppingListController.$inject = ['$scope'];
-    function ShoppingListController($scope) {
-        $scope.list1 = [
-            { name: 'cookies', quantity: 10},
-            { name: 'candies', quantity: 4},
-            { name: 'water', quantity: 5},
-            { name: 'avocados', quantity: 3},
-            { name: 'bananas', quantity: 6}
+
+    ToBuyController.$inject = ['$scope', 'ShoppingListCheckOffService'];
+    function ToBuyController($scope, ShoppingListCheckOffService) {
+        var list1 = this;
+
+        list1.items = ShoppingListCheckOffService.getItemsToBuy();
+
+        list1.buy = function (itemIndex) {
+            ShoppingListCheckOffService.buy(itemIndex);
+        };
+    }
+
+    AlreadyBoughtController.$inject = ['$scope', 'ShoppingListCheckOffService'];
+    function AlreadyBoughtController($scope, ShoppingListCheckOffService) {
+        var list2 = this;
+
+        list2.items = ShoppingListCheckOffService.getItemsBought();
+
+    }
+
+    function ShoppingListCheckOffService() {
+        var service = this;
+
+        service.itemsToBuy = [
+            { name: 'cookies', quantity: 10 },
+            { name: 'candies', quantity: 4 },
+            { name: 'water', quantity: 5 },
+            { name: 'avocados', quantity: 3 },
+            { name: 'bananas', quantity: 6 }
         ];
+        service.itemsBought = [];
 
-        $scope.list2 = [];   
+        service.buy = function (itemIndex) {
+            var item = service.itemsToBuy.splice(itemIndex, 1);
 
-        $scope.buy = function(itemIndex) {
-            console.log(itemIndex);
-
-            var item = $scope.list2.splice(itemIndex, 1);
-
-            console.log(item);
-            
-            $scope.list2.push(item);
+            service.itemsBought.push({ name: item.name, quantity: item.quantity });
         };
 
-             
+        service.getItemsToBuy = function () {
+            return service.itemsToBuy;
+        };
+
+        service.getItemsBought = function () {
+            return service.itemsBought;
+        };        
     }
+
 
 })();
