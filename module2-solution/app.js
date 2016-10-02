@@ -19,7 +19,7 @@
         list1.items = ShoppingListCheckOffService.getItemsToBuy();
 
         list1.buy = function (itemIndex) {
-            ShoppingListCheckOffService.buy(itemIndex);
+            ShoppingListCheckOffService.buyItem(itemIndex);
         };
     }
 
@@ -28,34 +28,33 @@
         var list2 = this;
 
         list2.items = ShoppingListCheckOffService.getItemsBought();
-
     }
 
     function ShoppingListCheckOffService() {
         var service = this;
 
-        service.itemsToBuy = [
+        var itemsToBuy = [
             { name: 'cookies', quantity: 10 },
             { name: 'candies', quantity: 4 },
             { name: 'water', quantity: 5 },
             { name: 'avocados', quantity: 3 },
             { name: 'bananas', quantity: 6 }
         ];
-        service.itemsBought = [];
+        var itemsBought = [];
 
-        service.buy = function (itemIndex) {
-            var item = service.itemsToBuy.splice(itemIndex, 1);
-
-            service.itemsBought.push({ name: item.name, quantity: item.quantity });
+        service.buyItem = function (itemIndex) {
+            var item = itemsToBuy[itemIndex];
+            itemsBought.push(item);
+            itemsToBuy.splice(itemIndex, 1);
         };
 
         service.getItemsToBuy = function () {
-            return service.itemsToBuy;
+            return itemsToBuy;
         };
 
         service.getItemsBought = function () {
-            return service.itemsBought;
-        };        
+            return itemsBought;
+        };
     }
 
 
