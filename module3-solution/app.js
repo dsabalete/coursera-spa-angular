@@ -1,62 +1,53 @@
 (function () {
     'use strict';
 
-    angular.module('ShoppingListCheckOff', [])
+    angular.module('NarrowItDownApp', [])
 
-        .controller('ToBuyController', ToBuyController)
+        .controller('NarrowItDownController', NarrowItDownController)
 
-        .controller('AlreadyBoughtController', AlreadyBoughtController)
-
-        .service('ShoppingListCheckOffService', ShoppingListCheckOffService);
+        .service('MenuSearchService', MenuSearchService);
 
 
+    NarrowItDownController.$inject = ['$scope', 'MenuSearchService'];
+    function NarrowItDownController($scope, MenuSearchService) {
+        var ctrl = this;
 
-
-    ToBuyController.$inject = ['$scope', 'ShoppingListCheckOffService'];
-    function ToBuyController($scope, ShoppingListCheckOffService) {
-        var list1 = this;
-
-        list1.items = ShoppingListCheckOffService.getItemsToBuy();
-
-        list1.buy = function (itemIndex) {
-            ShoppingListCheckOffService.buy(itemIndex);
+        ctrl.narrowIt = function () {
+            
+            ctrl.items = MenuSearchService.getMatchedMenuItems();
+            console.log('narrow it!', ctrl.items.length);
         };
+
+        //MenuSearchService.getMatchedMenuItems();
+
+        // ctrl.getList = function (itemIndex) {
+        //     MenuSearchService.buy(itemIndex);
+        // };
+
+
     }
 
-    AlreadyBoughtController.$inject = ['$scope', 'ShoppingListCheckOffService'];
-    function AlreadyBoughtController($scope, ShoppingListCheckOffService) {
-        var list2 = this;
 
-        list2.items = ShoppingListCheckOffService.getItemsBought();
-
-    }
-
-    function ShoppingListCheckOffService() {
+    MenuSearchService.$inject = ['$http'];
+    function MenuSearchService($http) {
         var service = this;
+        var foundItems = [];
 
-        service.itemsToBuy = [
-            { name: 'cookies', quantity: 10 },
-            { name: 'candies', quantity: 4 },
-            { name: 'water', quantity: 5 },
-            { name: 'avocados', quantity: 3 },
-            { name: 'bananas', quantity: 6 }
-        ];
-        service.itemsBought = [];
-
-        service.buy = function (itemIndex) {
-            var item = service.itemsToBuy.splice(itemIndex, 1);
-
-            service.itemsBought.push({ name: item.name, quantity: item.quantity });
+        service.getMatchedMenuItems = function (searchTerm) {
+            return $http({
+                method: 'GET',
+                url: 'https://davids-restaurant.herokuapp.com/menu_items.json'
+            }).then(function (result) {
+                // process result and only keep items that match
+                
+                foundItems = result.data.menu_items;
+                
+                // return processed items
+                return foundItems;
+            });
         };
 
-        service.getItemsToBuy = function () {
-            return service.itemsToBuy;
-        };
-
-        service.getItemsBought = function () {
-            return service.itemsBought;
-        };        
+        
     }
-
 
 })();
