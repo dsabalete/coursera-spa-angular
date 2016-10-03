@@ -5,29 +5,20 @@
 
         .controller('NarrowItDownController', NarrowItDownController)
 
-        .service('MenuSearchService', MenuSearchService);
+        .service('MenuSearchService', MenuSearchService)
 
+        .directive("foundItems", foundItems);
 
-    NarrowItDownController.$inject = ['$scope', 'MenuSearchService'];
-    function NarrowItDownController($scope, MenuSearchService) {
-        var ctrl = this;
-
-        ctrl.items = [];
-
-        ctrl.narrowIt = function () {
-            ctrl.items = [];
-            MenuSearchService.getMatchedMenuItems(ctrl.searchTerm).then(function (result) {
-                ctrl.items = result;
-            });
+    function foundItems() {
+        var ddo = {
+            templateUrl: 'foundItems.html',
+            scope: {
+                items: '<',
+                onRemove: '&'
+            }
         };
 
-        //MenuSearchService.getMatchedMenuItems();
-
-        // ctrl.getList = function (itemIndex) {
-        //     MenuSearchService.buy(itemIndex);
-        // };
-
-
+        return ddo;
     }
 
 
@@ -35,25 +26,52 @@
     function MenuSearchService($http) {
         var service = this;
 
-        service.getMatchedMenuItems = function (searchTerm) {
-            console.log("searching for: " + searchTerm);
-            var foundItems = [];
-            return $http({
-                method: 'GET',
-                url: 'https://davids-restaurant.herokuapp.com/menu_items.json'
-            }).then(function (result) {
-                // process result and only keep items that match
-                var menu_items = result.data.menu_items;
-                for (var i = 0; i < menu_items.length; i++) {
-                    var elem = menu_items[i];
-                    if (elem.description.indexOf(searchTerm) !== -1 || searchTerm === undefined) {
-                        foundItems.push(elem);
-                    }
+        service.getAllItems = function () {
+            $http({
+                url: "menu_items.json"
+                //url: "https://davids-restaurant.herohuapp.com/menu_items.json"
+            }).then(
+                function (result) {
+                    service.data = result.data;
+                }, function (error) {
+                    console.log(error);
                 }
-                // return processed items
-                return foundItems;
-            });
+                );
+        };
+
+        service.getMatchedMenuItems = function (searchTerm) {
+            if (!service.data) service.getAllItems();
+            if (searchTerm === "") return [];
+            var items = service.data.menu_items;
+            var found = [];
+
+            for (var i = 0; i < items.length; i++) {
+                var desc = items[i].description;
+                // console.log(desc);
+                if (desc.indexOf(searchTerm) !== -1) {
+                    found.push(items[i]);
+                }
+            }
+            return found;
+        };
+
+        service.getAllItems();
+    }
+
+
+    NarrowItDownController.$inject = ['MenuSearchService'];
+    function NarrowItDownController(MenuSearchService) {
+        var ctrl = this;
+        ctrl.found = [];
+        ctrl.search = function () {
+            ctrl.found = MenuSearchService.getMatchedMenuItems(ctrl.searchTerm);
+        };
+        ctrl.remove = function (index) {
+            ctrl.found.splice(index, 1);
         };
     }
+
+
+
 
 })();
