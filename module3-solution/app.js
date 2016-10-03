@@ -12,10 +12,12 @@
     function NarrowItDownController($scope, MenuSearchService) {
         var ctrl = this;
 
+        ctrl.items = [];
+
         ctrl.narrowIt = function () {
-            
-            ctrl.items = MenuSearchService.getMatchedMenuItems();
-            console.log('narrow it!', ctrl.items.length);
+            MenuSearchService.getMatchedMenuItems().then(function (result) {
+                ctrl.items = result;
+            });
         };
 
         //MenuSearchService.getMatchedMenuItems();
@@ -39,15 +41,18 @@
                 url: 'https://davids-restaurant.herokuapp.com/menu_items.json'
             }).then(function (result) {
                 // process result and only keep items that match
-                
-                foundItems = result.data.menu_items;
-                
+                var menu_items = result.data.menu_items;
+                for (var i = 0; i < menu_items.length; i++) {
+                    if (menu_items[i].description.indexOf(searchTerm) !== -1 || searchTerm === undefined) {
+                        foundItems.push(menu_items[i]);
+                    }
+                }
                 // return processed items
                 return foundItems;
             });
         };
 
-        
+
     }
 
 })();

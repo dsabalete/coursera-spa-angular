@@ -22,8 +22,8 @@
     </div>
 
     <ul>
-      <li ng-repeat="item in ctrl.items">jurl</li>
-      </ul>
+      <li ng-repeat="item in ctrl.items">{{ item.short_name + " - " + item.name + " - " + item.description }}</li>
+    </ul>
 
     <!-- Bonus loader (see Bonus section of the assignment) -->
     <items-loader-indicator></items-loader-indicator>
