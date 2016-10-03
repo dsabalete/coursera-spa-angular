@@ -15,7 +15,8 @@
         ctrl.items = [];
 
         ctrl.narrowIt = function () {
-            MenuSearchService.getMatchedMenuItems().then(function (result) {
+            ctrl.items = [];
+            MenuSearchService.getMatchedMenuItems(ctrl.searchTerm).then(function (result) {
                 ctrl.items = result;
             });
         };
@@ -33,9 +34,10 @@
     MenuSearchService.$inject = ['$http'];
     function MenuSearchService($http) {
         var service = this;
-        var foundItems = [];
 
         service.getMatchedMenuItems = function (searchTerm) {
+            console.log("searching for: " + searchTerm);
+            var foundItems = [];
             return $http({
                 method: 'GET',
                 url: 'https://davids-restaurant.herokuapp.com/menu_items.json'
@@ -43,16 +45,15 @@
                 // process result and only keep items that match
                 var menu_items = result.data.menu_items;
                 for (var i = 0; i < menu_items.length; i++) {
-                    if (menu_items[i].description.indexOf(searchTerm) !== -1 || searchTerm === undefined) {
-                        foundItems.push(menu_items[i]);
+                    var elem = menu_items[i];
+                    if (elem.description.indexOf(searchTerm) !== -1 || searchTerm === undefined) {
+                        foundItems.push(elem);
                     }
                 }
                 // return processed items
                 return foundItems;
             });
         };
-
-
     }
 
 })();
