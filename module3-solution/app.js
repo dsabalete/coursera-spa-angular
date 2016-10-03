@@ -7,7 +7,12 @@
 
         .service('MenuSearchService', MenuSearchService)
 
-        .directive("foundItems", foundItems);
+        .directive("foundItems", foundItems)
+        
+        .constant('ApiBasePath', "https://davids-restaurant.herokuapp.com");
+
+
+
 
     function foundItems() {
         var ddo = {
@@ -22,13 +27,13 @@
     }
 
 
-    MenuSearchService.$inject = ['$http'];
-    function MenuSearchService($http) {
+    MenuSearchService.$inject = ['$http', 'ApiBasePath'];
+    function MenuSearchService($http, ApiBasePath) {
         var service = this;
 
         service.getAllItems = function () {
             $http({
-                url: "menu_items.json"
+                url: (ApiBasePath + "/menu_items.json")
                 //url: "https://davids-restaurant.herohuapp.com/menu_items.json"
             }).then(
                 function (result) {
