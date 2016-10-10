@@ -5,7 +5,31 @@
 
         .controller('NarrowItDownController', NarrowItDownController)
 
-        .service('MenuSearchService', MenuSearchService);
+        .service('MenuSearchService', MenuSearchService)
+
+        .directive('foundItems', FoundItemsDirective);
+
+
+    function FoundItemsDirective() {
+        var ddo = {
+            templateUrl: 'foundItems.template.html',
+            scope: {
+                foundItems: '<',
+                onRemove: '&'
+            },
+            controller: FoundItemsDirectiveController,
+            controllerAs: 'list',
+            bindToController: true,
+            transclude: true
+        };
+
+        return ddo;
+    }
+
+    function FoundItemsDirectiveController() {
+        var list = this;
+
+    }
 
 
     NarrowItDownController.$inject = ['$scope', 'MenuSearchService'];
@@ -21,12 +45,9 @@
             });
         };
 
-        //MenuSearchService.getMatchedMenuItems();
-
-        // ctrl.getList = function (itemIndex) {
-        //     MenuSearchService.buy(itemIndex);
-        // };
-
+        ctrl.removeItem = function (itemIndex) {
+            ctrl.items.splice(itemIndex, 1);
+        };
 
     }
 
