@@ -7,74 +7,100 @@
 
         .service('MenuSearchService', MenuSearchService)
 
-        .directive('foundItems', FoundItemsDirective);
+        // .directive('foundItems', FoundItemsDirective)
+
+        .directive("foundItems", foundItems)
+        
+        .constant('ApiBasePath', "https://davids-restaurant.herokuapp.com");
 
 
-    function FoundItemsDirective() {
+
+    // function FoundItemsDirective() {
+    //     var ddo = {
+    //         templateUrl: 'foundItems.template.html',
+    //         scope: {
+    //             foundItems: '<',
+    //             onRemove: '&'
+    //         },
+    //         controller: FoundItemsDirectiveController,
+    //         controllerAs: 'list',
+    //         bindToController: true,
+    //         transclude: true
+    //     };
+
+    //     return ddo;
+    // }
+
+
+    // function FoundItemsDirectiveController() {
+    //     var list = this;
+
+    // }
+
+
+    function foundItems() {
         var ddo = {
-            templateUrl: 'foundItems.template.html',
+            templateUrl: 'foundItems.html',
             scope: {
-                foundItems: '<',
+                items: '<',
                 onRemove: '&'
-            },
-            controller: FoundItemsDirectiveController,
-            controllerAs: 'list',
-            bindToController: true,
-            transclude: true
+            }
         };
 
         return ddo;
     }
 
-    function FoundItemsDirectiveController() {
-        var list = this;
 
-    }
-
-
-    NarrowItDownController.$inject = ['$scope', 'MenuSearchService'];
-    function NarrowItDownController($scope, MenuSearchService) {
-        var ctrl = this;
-
-        ctrl.items = [];
-
-        ctrl.narrowIt = function () {
-            ctrl.items = [];
-            MenuSearchService.getMatchedMenuItems(ctrl.searchTerm).then(function (result) {
-                ctrl.items = result;
-            });
-        };
-
-        ctrl.removeItem = function (itemIndex) {
-            ctrl.items.splice(itemIndex, 1);
-        };
-
-    }
-
-
-    MenuSearchService.$inject = ['$http'];
-    function MenuSearchService($http) {
+    MenuSearchService.$inject = ['$http', 'ApiBasePath'];
+    function MenuSearchService($http, ApiBasePath) {
         var service = this;
 
-        service.getMatchedMenuItems = function (searchTerm) {
-            console.log("searching for: " + searchTerm);
-            var foundItems = [];
-            return $http({
-                method: 'GET',
-                url: 'https://davids-restaurant.herokuapp.com/menu_items.json'
-            }).then(function (result) {
-                // process result and only keep items that match
-                var menu_items = result.data.menu_items;
-                for (var i = 0; i < menu_items.length; i++) {
-                    var elem = menu_items[i];
-                    if (elem.description.indexOf(searchTerm) !== -1 || searchTerm === undefined) {
-                        foundItems.push(elem);
-                    }
+        service.getAllItems = function () {
+            $http({
+                url: (ApiBasePath + "/menu_items.json")
+                //url: "https://davids-restaurant.herohuapp.com/menu_items.json"
+            }).then(
+                function (result) {
+                    service.data = result.data;
+                }, function (error) {
+                    console.log(error);
                 }
-                // return processed items
-                return foundItems;
-            });
+                );
+        };
+
+        service.getMatchedMenuItems = function (searchTerm) {
+            if (!service.data) service.getAllItems();
+            if (searchTerm === "") return [];
+            var items = service.data.menu_items;
+            var found = [];
+
+            for (var i = 0; i < items.length; i++) {
+                var desc = items[i].description;
+                // console.log(desc);
+                if (desc.indexOf(searchTerm) !== -1) {
+                    found.push(items[i]);
+                }
+            }
+            return found;
+        };
+
+        service.getAllItems();
+    }
+
+
+    NarrowItDownController.$inject = ['MenuSearchService'];
+    function NarrowItDownController(MenuSearchService) {
+        var ctrl = this;
+        ctrl.found = [];
+        ctrl.search = function () {
+            ctrl.found = MenuSearchService.getMatchedMenuItems(ctrl.searchTerm);
+        };
+        ctrl.remove = function (index) {
+            ctrl.found.splice(index, 1);
         };
     }
+
+
+
 
 })();
