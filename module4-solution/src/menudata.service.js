@@ -12,32 +12,25 @@
         service.getAllCategories = function () {
             console.log('service.getAllCategories()');
 
-            $http({
+            var promise = $http({
                 method: 'GET',
                 url: 'https://davids-restaurant.herokuapp.com/categories.json'
-            }).then(function success(response) {
-                return response;
-            }, function error(response) {
-                console.error(response);
             });
-        };
 
+            return promise;
+        };
 
 
         service.getItemsForCategory = function (categoryShortName) {
-            console.log('service.getItemsForCategory()');
+            console.log('service.getItemsForCategory(' + categoryShortName + ')');
 
-            $http({
+            return  $http({
                 method: 'GET',
-                url: 'https://davids-restaurant.herokuapp.com/menu_items.json?category=' + categoryShortName
-            }).then(function success(response) {
-                return response;
-            }, function error(response) {
-                console.error(response);
+                url: 'https://davids-restaurant.herokuapp.com/menu_items.json',
+                params: { 'category': categoryShortName }
             });
         };
         
-
     }
 
 

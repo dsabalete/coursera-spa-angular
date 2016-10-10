@@ -1,31 +1,51 @@
 <!DOCTYPE html>
-<html ng-app='MenuApp'>
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="css/styles.css">
-    <title>Assignment 4</title>
-  </head>
-  <body>
+<html>
 
-    <ui-view></ui-view>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <title>Assignment 4</title>
+</head>
 
-    <!-- Libraries -->
-    <script src="lib/angular.min.js"></script>
-    <script src="lib/angular-ui-router.min.js"></script>
+<body ng-app='MenuApp'>
 
-    <!-- Modules -->
-    <script src="src/data.module.js"></script>
-    <script src="src/menuapp.module.js"></script>
+  <div class="container">
+    <header>
+      <h1>The Angular Restaurant</h1>
+    </header>
 
-    <!-- Routes -->
-    <script src="src/routes.js"></script>
+    <div class="content">
 
-    <!-- 'MenuApp' artifacts -->
-    <script src="src/menudata.service.js"></script>    
-    <script src="src/categories.component.js"></script>
-    <script src="src/categories.controller.js"></script>
-    <script src="src/items.component.js"></script>
-    
+      <div>
+        <a ui-sref="home"> Home </a>
+      </div>
 
-  </body>
+      <ui-view></ui-view>
+
+    </div>
+
+  </div>
+
+  <!-- Libraries -->
+  <script src="lib/angular.min.js"></script>
+  <script src="lib/angular-ui-router.min.js"></script>
+
+  <!-- Modules -->
+  <script src="src/menuapp.module.js"></script>
+  <script src="src/data.module.js"></script>
+
+
+  <!-- 'MenuApp' artifacts -->
+  <script src="src/menudata.service.js"></script>
+  <script src="src/categories.component.js"></script>
+  <script src="src/categories.controller.js"></script>
+  <script src="src/itemdetails.controller.js"></script>
+  <!--<script src="src/items.component.js"></script>-->
+
+  <!-- Routes -->
+  <script src="src/routes.js"></script>
+
+</body>
+
 </html>

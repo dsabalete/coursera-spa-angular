@@ -6,33 +6,38 @@
 
     RoutesConfig.$inject = ['$stateProvider', '$urlRouterProvider'];
     function RoutesConfig($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider.otherwise('/home');
 
-        // Redirect to home page if no other URL matches
-        $urlRouterProvider.otherwise('/');
-
-        // Set up UI states
         $stateProvider
 
             .state('home', {
-                url: '/',
+                url: '/home',
                 templateUrl: 'src/templates/home.template.html'
             })
 
             .state('categories', {
                 url: '/categories',
-                templateUrl: 'src/templates/main-categories.template.html',
-                // controller: 'CategoriesController as catCtrl',
-                // resolve: {
-                //     items: ['MenuDataService', function (MenuDataService) {
-                //         return MenuDataService.getAllCategories();
-                //     }]
-                // }
+                templateUrl: 'src/templates/category.template.html',
+                resolve: {
+                    categories: ['MenuDataService', function MenuDataService(MenuDataService) {
+                        return MenuDataService.getAllCategories();
+                    }]
+                },
+                controller: 'CategoryController as categoryCtrl'
             })
-            
-            .state('categories.items', {
-                url: '/items/{categoriId}',
-                templateUrl: 'src/templates/items-category.template.html'
-            });
+
+            // .state('categories.itemsDetails', {
+            //     url: '/item-details/{itemShortName}',
+            //     templateUrl: 'src/templates/items-details.template.html',
+            //     resolve: {
+            //         items: ['$stateParams', 'MenuDataService', function MenuDataService($stateParams, MenuDataService) {
+            //             return MenuDataService.getItemsForCategory($stateParams.itemShortName);
+            //         }]
+            //     },
+            //     controller: 'ItemDetailsController as itemDetailsCtrl'
+            // })
+
+            ;
     }
 
 })();
